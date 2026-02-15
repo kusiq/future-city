@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import './App.css';
 import { CITY_IMAGES } from './cityImages';
-import { playClickSound } from './sounds';
 import { CityCard } from './components/CityCard';
 import { CreateCityModal } from './components/CreateCityModal';
 import { EditCityModal } from './components/EditCityModal';
@@ -13,6 +12,7 @@ import {
   getRandomEvent,
   isCityInactive,
 } from './gameLogic';
+import { playClickSound } from './sounds';
 import type { City, DevelopmentOptionId } from './types';
 import {
   DEVELOPMENT_OPTIONS,
@@ -201,7 +201,7 @@ function App() {
 
   return (
     <div className="app">
-      <div className="app-brand">ЛДПР. Партия молодых</div>
+      <div className="app-brand">🇷🇺 ЛДПР. Партия молодых</div>
       <header className="app-header">
         <h1 className="game-title">
           <span className="game-title-ldpr">ЛДПР.</span>

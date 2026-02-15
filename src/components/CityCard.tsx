@@ -1,9 +1,8 @@
-import type { City } from '../types';
 import { getCityImageUrl } from '../cityImages';
-import type { DevelopmentOptionId } from '../types';
-import { DEVELOPMENT_OPTIONS } from '../types';
 import { getDevelopmentRewardsRange } from '../gameLogic';
 import { playClickSound } from '../sounds';
+import type { City, DevelopmentOptionId } from '../types';
+import { DEVELOPMENT_OPTIONS } from '../types';
 import './CityCard.css';
 
 function formatRewardRange(min: number, max: number, suffix: string): string {
@@ -55,15 +54,15 @@ export function CityCard({
       <h3 className="city-card-name">{city.name}</h3>
       <ul className="city-card-stats">
         <li>
-          <span className="stat-label">Население</span>
+          <span className="stat-label">👫 Население</span>
           <span className="stat-value">{city.population}к</span>
         </li>
         <li>
-          <span className="stat-label">Деньги</span>
+          <span className="stat-label">💰 Деньги</span>
           <span className="stat-value">{city.money}</span>
         </li>
         <li>
-          <span className="stat-label">Технологии</span>
+          <span className="stat-label">⚙️ Технологии</span>
           <span className="stat-value">{city.technologies}</span>
         </li>
       </ul>
