@@ -1,0 +1,290 @@
+.city-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.city-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.city-card-image-wrap {
+  position: relative;
+  aspect-ratio: 400 / 250;
+  overflow: hidden;
+}
+
+.city-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.city-card-level {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.city-card-level-up-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  animation: levelUpBadge 5.5s ease-out forwards;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.5);
+}
+
+@keyframes levelUpBadge {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+  }
+  15% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.1);
+  }
+  25% {
+    transform: translateX(-50%) scale(1);
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+.city-card--level-up {
+  animation: levelUpGlow 2.5s ease-out;
+}
+
+@keyframes levelUpGlow {
+  0% {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(16, 185, 129, 0.6);
+  }
+  20% {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 0 12px rgba(16, 185, 129, 0);
+  }
+  40% {
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.25), 0 0 24px rgba(16, 185, 129, 0.15);
+  }
+  70% {
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2), 0 0 20px rgba(16, 185, 129, 0.1);
+  }
+  100% {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.city-card-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin: 16px 16px 0;
+  color: var(--text-primary);
+}
+
+.city-card-stats {
+  list-style: none;
+  margin: 12px 16px 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.city-card-stats li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-label {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.stat-value {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+.city-card-edit {
+  margin: 0 16px 16px;
+  padding: 10px 16px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.city-card-edit:hover {
+  background: var(--input-bg);
+  border-color: var(--accent);
+}
+
+.city-card-edit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Неактивная карточка — визуально неактивна, редактирование доступно */
+.city-card--inactive {
+  opacity: 0.7;
+}
+
+.city-card--inactive .city-card-edit {
+  opacity: 1;
+}
+
+/* Варианты развития */
+.city-card-development {
+  margin: 0 16px 12px;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.development-label {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.btn-development {
+  text-align: left;
+  padding: 10px 12px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.btn-development:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--input-bg);
+}
+
+.btn-development:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-development--selected {
+  border-color: var(--accent);
+  background: rgba(14, 165, 233, 0.15);
+}
+
+.development-name {
+  font-weight: 700;
+}
+
+.development-cost {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.development-desc,
+.development-reward {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.development-reward {
+  color: #10b981;
+}
+
+.btn-development--locked {
+  opacity: 0.6;
+}
+
+.development-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-development-cancel,
+.btn-development-confirm {
+  flex: 1;
+  padding: 8px 12px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.btn-development-cancel {
+  background: var(--surface);
+  color: var(--text-secondary);
+  border: 2px solid var(--border);
+}
+
+.btn-development-cancel:hover {
+  background: var(--input-bg);
+  color: var(--text-primary);
+}
+
+.btn-development-confirm {
+  background: #10b981;
+  color: #fff;
+}
+
+.btn-development-confirm:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-development-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
