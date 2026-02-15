@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { playClickSound } from '../sounds';
 import './Modal.css';
 
 interface CreateCityModalProps {
@@ -20,6 +21,7 @@ export function CreateCityModal({ isOpen, onClose, onCreate }: CreateCityModalPr
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    playClickSound();
     const trimmed = name.trim();
     if (trimmed) {
       onCreate(trimmed);
@@ -44,7 +46,7 @@ export function CreateCityModal({ isOpen, onClose, onCreate }: CreateCityModalPr
             maxLength={50}
           />
           <div className="modal-actions">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>
+            <button type="button" className="btn btn-secondary" onClick={() => { playClickSound(); onClose(); }}>
               Отмена
             </button>
             <button type="submit" className="btn btn-primary" disabled={!name.trim()}>

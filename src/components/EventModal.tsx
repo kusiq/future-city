@@ -1,4 +1,5 @@
 import type { GameEvent } from '../types';
+import { playClickSound } from '../sounds';
 import './Modal.css';
 
 interface EventModalProps {
@@ -35,7 +36,7 @@ export function EventModal({ event, onClose }: EventModalProps) {
             Технологии: {formatEffect(effect.technologies, '')}
           </span>
         </div>
-        <button type="button" className="btn btn-primary" onClick={onClose}>
+        <button type="button" className="btn btn-primary" onClick={() => { playClickSound(); onClose(); }}>
           Продолжить
         </button>
       </div>

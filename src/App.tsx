@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import './App.css';
 import { CITY_IMAGES } from './cityImages';
+import { playClickSound } from './sounds';
 import { CityCard } from './components/CityCard';
 import { CreateCityModal } from './components/CreateCityModal';
 import { EditCityModal } from './components/EditCityModal';
@@ -193,11 +194,19 @@ function App() {
   const isYear2035 = year === MAX_YEAR;
   const bestCity = getMostDevelopedCity(cities);
 
+  const activeCities = cities.filter((c) => !isCityInactive(c));
+  const allCitiesChoseDevelopment =
+    activeCities.length === 0 || activeCities.every((c) => developmentChoices[c.id]);
+  const canEndYear = allCitiesChoseDevelopment;
+
   return (
     <div className="app">
       <div className="app-brand">ЛДПР. Партия молодых</div>
       <header className="app-header">
-        <h1 className="game-title">Город будущего</h1>
+        <h1 className="game-title">
+          <span className="game-title-ldpr">ЛДПР.</span>
+          <span className="game-title-main"> Город будущего</span>
+        </h1>
         <p className="game-description">
           Стратегическая игра для команд от партии ЛДПР: развивайте свой город с 2026 по 2035 год, выбирайте варианты развития и реагируйте на события. Вместе создайте свой процветающий город и получите незабывваемый опыт и награды!
         </p>
@@ -245,44 +254,50 @@ function App() {
           ))}
         </div>
 
-        {canAddCity && (
-          <button
-            type="button"
-            className="btn btn-found"
-            onClick={() => setCreateModalOpen(true)}
-          >
-            Основать город
-          </button>
-        )}
-
-        {cities.length > 0 && (
+        {(canAddCity || cities.length > 0) && (
           <div className="app-actions-spacer" aria-hidden />
         )}
       </main>
 
-      {cities.length > 0 && (
+      {(canAddCity || cities.length > 0) && (
         <div className="app-actions app-actions--fixed">
-          {simulationRunning && isYear2035 ? (
+          {canAddCity && (
             <button
               type="button"
-              className="btn btn-finish"
-              onClick={handleFinishGame}
+              className="btn btn-found"
+              onClick={() => { playClickSound(); setCreateModalOpen(true); }}
             >
-              Завершить игру
+              Основать город
             </button>
-          ) : (
-            <button
-              type="button"
-              className="btn btn-simulation"
-              onClick={simulationRunning ? handleEndYear : handleStartSimulation}
-              disabled={simulationRunning && isGameOver}
-            >
-              {simulationRunning
-                ? isGameOver
-                  ? `Игра до ${MAX_YEAR} года завершена`
-                  : 'Завершить год'
-                : 'Запустить симуляцию'}
-            </button>
+          )}
+          {cities.length > 0 && (
+            simulationRunning && isYear2035 ? (
+              <button
+                type="button"
+                className="btn btn-finish"
+                onClick={() => { playClickSound(); handleFinishGame(); }}
+              >
+                Завершить игру
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-simulation"
+                onClick={() => { playClickSound(); if (simulationRunning) handleEndYear(); else handleStartSimulation(); }}
+                disabled={simulationRunning && (isGameOver || !canEndYear)}
+                title={
+                  simulationRunning && !canEndYear
+                    ? 'Выберите путь развития для всех городов'
+                    : undefined
+                }
+              >
+                {simulationRunning
+                  ? isGameOver
+                    ? `Игра до ${MAX_YEAR} года завершена`
+                    : 'Завершить год'
+                  : 'Запустить симуляцию'}
+              </button>
+            )
           )}
         </div>
       )}

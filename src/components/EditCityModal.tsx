@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { City } from '../types';
+import { playClickSound } from '../sounds';
 import './Modal.css';
 
 interface EditCityModalProps {
@@ -26,6 +27,7 @@ export function EditCityModal({ isOpen, city, onClose, onSave }: EditCityModalPr
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    playClickSound();
     onSave({
       population: Math.max(0, population),
       money: Math.max(0, money),
@@ -81,7 +83,7 @@ export function EditCityModal({ isOpen, city, onClose, onSave }: EditCityModalPr
             </div>
           </div>
           <div className="modal-actions">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>
+            <button type="button" className="btn btn-secondary" onClick={() => { playClickSound(); onClose(); }}>
               Отмена
             </button>
             <button type="submit" className="btn btn-primary">

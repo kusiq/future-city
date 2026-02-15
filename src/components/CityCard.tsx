@@ -3,6 +3,7 @@ import { getCityImageUrl } from '../cityImages';
 import type { DevelopmentOptionId } from '../types';
 import { DEVELOPMENT_OPTIONS } from '../types';
 import { getDevelopmentRewardsRange } from '../gameLogic';
+import { playClickSound } from '../sounds';
 import './CityCard.css';
 
 function formatRewardRange(min: number, max: number, suffix: string): string {
@@ -94,7 +95,7 @@ export function CityCard({
                 type="button"
                 className={`btn-development ${isSelected ? 'btn-development--selected' : ''} ${locked ? 'btn-development--locked' : ''}`}
                 disabled={locked || !canAfford}
-                onClick={() => !locked && onSelectDevelopment(opt.id)}
+                onClick={() => { playClickSound(); if (!locked) onSelectDevelopment(opt.id); }}
                 title={opt.description + rewardPreview}
               >
                 <span className="development-name">{opt.name}</span>
@@ -108,7 +109,7 @@ export function CityCard({
               <button
                 type="button"
                 className="btn-development-cancel"
-                onClick={onCancelChoice}
+                onClick={() => { playClickSound(); onCancelChoice?.(); }}
               >
                 Отменить
               </button>
@@ -116,7 +117,7 @@ export function CityCard({
                 <button
                   type="button"
                   className="btn-development-confirm"
-                  onClick={onConfirmChoice}
+                  onClick={() => { playClickSound(); onConfirmChoice?.(); }}
                   disabled={!canConfirm}
                   title="Опционально: списать деньги сейчас. Иначе списание при завершении года."
                 >
@@ -131,7 +132,7 @@ export function CityCard({
       <button
         type="button"
         className="city-card-edit btn-edit"
-        onClick={onEdit}
+        onClick={() => { playClickSound(); onEdit(); }}
       >
         Изменить ресурсы
       </button>
