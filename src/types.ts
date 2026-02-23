@@ -16,7 +16,7 @@ export const INITIAL_LEVEL = 1;
 export const MAX_CITIES = 6;
 export const START_YEAR = 2026;
 export const MAX_YEAR = 2035;
-export const MONEY_PER_YEAR = 1;
+export const MONEY_PER_YEAR = 5;
 export const MAX_LEVEL = 3;
 
 /** Пороги для повышения уровня: 2–3 города могут успеть до 3 уровня при грамотной игре */

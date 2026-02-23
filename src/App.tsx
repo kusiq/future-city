@@ -53,6 +53,75 @@ function getMostDevelopedCity(cities: City[]): City | null {
   })[0] ?? null;
 }
 
+type DevelopmentChoiceCounts = Record<string, Partial<Record<DevelopmentOptionId, number>>>;
+
+interface CityNomination {
+  city: City;
+  nomination: string;
+}
+
+function getCityNominations(
+  cities: City[],
+  developmentChoiceCounts: DevelopmentChoiceCounts,
+): CityNomination[] {
+  if (cities.length === 0) return [];
+  const winner = getMostDevelopedCity(cities)!;
+  const assigned = new Set<string>();
+  const result: CityNomination[] = [];
+
+  const getCount = (id: string, opt: DevelopmentOptionId) =>
+    developmentChoiceCounts[id]?.[opt] ?? 0;
+
+  // Номинации по статистике — присуждаем городу, который РЕАЛЬНО лидирует (может быть победитель)
+  const statNominations: { name: string; getBest: () => City }[] = [
+    { name: 'Город с наибольшим населением', getBest: () => cities.reduce((a, b) => (b.population > a.population ? b : a)) },
+    { name: 'Самый богатый город', getBest: () => cities.reduce((a, b) => (b.money > a.money ? b : a)) },
+    { name: 'Самый технологичный город', getBest: () => cities.reduce((a, b) => (b.technologies > a.technologies ? b : a)) },
+  ];
+
+  // Номинации по выбору развития — среди ещё не получивших награду
+  const choiceNominations: { name: string; score: (c: City) => number }[] = [
+    { name: 'Любитель технологий', score: (c) => getCount(c.id, 'tech') },
+    { name: 'Экономист', score: (c) => getCount(c.id, 'economic') },
+    { name: 'Строитель инфраструктуры', score: (c) => getCount(c.id, 'infrastructure') },
+    { name: 'Мастер баланса', score: (c) => getCount(c.id, 'balanced') },
+  ];
+
+  // Добавляем победителю подзаголовки, если он лидирует по статам
+  let winnerNomination = 'Победитель — самый развитый город';
+  for (const { name, getBest } of statNominations) {
+    if (getBest().id === winner.id) {
+      winnerNomination += ` (${name.toLowerCase()})`;
+    }
+  }
+  result.push({ city: winner, nomination: winnerNomination });
+  assigned.add(winner.id);
+
+  // Статистические номинации — только тем, кто реально лидирует и ещё не получил награду
+  for (const { name, getBest } of statNominations) {
+    const best = getBest();
+    if (!assigned.has(best.id)) {
+      result.push({ city: best, nomination: name });
+      assigned.add(best.id);
+    }
+  }
+
+  // Номинации по выбору развития — среди оставшихся городов
+  for (const { name, score } of choiceNominations) {
+    const unassigned = cities.filter((c) => !assigned.has(c.id));
+    if (unassigned.length === 0) break;
+    const best = unassigned.reduce((a, b) => (score(b) > score(a) ? b : a));
+    result.push({ city: best, nomination: name });
+    assigned.add(best.id);
+  }
+
+  for (const city of cities.filter((c) => !assigned.has(c.id))) {
+    result.push({ city, nomination: 'Почётный участник' });
+  }
+
+  return result;
+}
+
 function App() {
   const [cities, setCities] = useState<City[]>([]);
   const [simulationRunning, setSimulationRunning] = useState(false);
@@ -63,6 +132,7 @@ function App() {
     Record<string, DevelopmentOptionId>
   >({});
   const [developmentConfirmed, setDevelopmentConfirmed] = useState<Record<string, boolean>>({});
+  const [developmentChoiceCounts, setDevelopmentChoiceCounts] = useState<DevelopmentChoiceCounts>({});
   const [currentEvent, setCurrentEvent] = useState<import('./types').GameEvent | null>(null);
   const [levelUpCityIds, setLevelUpCityIds] = useState<string[]>([]);
 
@@ -132,6 +202,17 @@ function App() {
   }, [developmentChoices, developmentConfirmed]);
 
   const handleEndYear = useCallback(() => {
+    setDevelopmentChoiceCounts((prev) => {
+      const next = { ...prev };
+      for (const c of cities) {
+        const choice = developmentChoices[c.id];
+        if (choice) {
+          const cur = next[c.id] ?? {};
+          next[c.id] = { ...cur, [choice]: ((cur[choice] ?? 0) + 1) };
+        }
+      }
+      return next;
+    });
     setCities((prev) => {
       const next = prev.map((c) => {
         const choice = developmentChoices[c.id];
@@ -165,7 +246,7 @@ function App() {
     setDevelopmentChoices({});
     setDevelopmentConfirmed({});
     setCurrentEvent(getRandomEvent());
-  }, [developmentChoices, developmentConfirmed]);
+  }, [developmentChoices, developmentConfirmed, cities]);
 
   const handleCloseEventModal = useCallback(() => {
     if (currentEvent) {
@@ -186,17 +267,21 @@ function App() {
   }, [currentEvent]);
 
   const handleFinishGame = useCallback(() => {
-    setYear(MAX_YEAR + 1);
-  }, []);
+    handleEndYear();
+  }, [handleEndYear]);
 
   const canAddCity = cities.length < MAX_CITIES;
   const isGameOver = year > MAX_YEAR;
   const isYear2035 = year === MAX_YEAR;
-  const bestCity = getMostDevelopedCity(cities);
+  const nominations = getCityNominations(cities, developmentChoiceCounts);
 
-  const activeCities = cities.filter((c) => !isCityInactive(c));
+  const minDevelopmentCost = Math.min(...DEVELOPMENT_OPTIONS.map((o) => o.cost));
+  const citiesThatMustChoose = cities.filter(
+    (c) => !isCityInactive(c) && c.money >= minDevelopmentCost,
+  );
   const allCitiesChoseDevelopment =
-    activeCities.length === 0 || activeCities.every((c) => developmentChoices[c.id]);
+    citiesThatMustChoose.length === 0 ||
+    citiesThatMustChoose.every((c) => developmentChoices[c.id]);
   const canEndYear = allCitiesChoseDevelopment;
 
   return (
@@ -276,6 +361,8 @@ function App() {
                 type="button"
                 className="btn btn-finish"
                 onClick={() => { playClickSound(); handleFinishGame(); }}
+                disabled={!canEndYear}
+                title={!canEndYear ? 'Выберите путь развития для всех городов' : undefined}
               >
                 Завершить игру
               </button>
@@ -321,15 +408,17 @@ function App() {
         <div className="game-over-overlay">
           <div className="game-over-card">
             <h2 className="game-over-title">Игра завершена</h2>
-            {bestCity && (
-              <div className="game-over-best">
-                <span className="game-over-best-label">Самый развитый город:</span>
-                <strong className="game-over-best-name">{bestCity.name}</strong>
-                <span className="game-over-best-stats">
-                  Уровень {bestCity.level}, население {bestCity.population}к, технологии {bestCity.technologies}
-                </span>
-              </div>
-            )}
+            <div className="game-over-nominations">
+              {nominations.map(({ city, nomination }) => (
+                <div key={city.id} className="game-over-nomination">
+                  <span className="game-over-nomination-title">{nomination}</span>
+                  <strong className="game-over-nomination-name">{city.name}</strong>
+                  <span className="game-over-nomination-stats">
+                    Ур. {city.level}, {city.population}к насел., {city.money} ден., {city.technologies} техн.
+                  </span>
+                </div>
+              ))}
+            </div>
             <p className="game-over-text">
               Все города прошли путь развития до 2035 года. Команды и мэры проявили стратегическое мышление и заботу о своих городах. Теперь всех участников и мэров городов ждут награды от организаторов и ведущих игры — благодарим за участие!
             </p>
