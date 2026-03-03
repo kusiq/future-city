@@ -286,14 +286,10 @@ function App() {
 
   return (
     <div className="app">
-      <div className="app-brand">🇷🇺 ЛДПР. Партия молодых</div>
       <header className="app-header">
-        <h1 className="game-title">
-          <span className="game-title-ldpr">ЛДПР.</span>
-          <span className="game-title-main"> Город будущего</span>
-        </h1>
+        <h1 className="game-title">Город будущего</h1>
         <p className="game-description">
-          Стратегическая игра для команд от партии ЛДПР: развивайте свой город с 2026 по 2035 год, выбирайте варианты развития и реагируйте на события. Вместе создайте свой процветающий город и получите незабывваемый опыт и награды!
+          Стратегическая игра для команд от Костромской областной Думы: развивайте свой город с 2026 по 2035 год, выбирайте варианты развития и реагируйте на события. Вместе создайте свой процветающий город и получите незабываемый опыт и награды!
         </p>
         <div className="level-hints">
           <span className="level-hint">

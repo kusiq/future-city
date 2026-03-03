@@ -1,27 +1,9 @@
 .app {
   min-height: 100vh;
-  padding: 48px 24px 32px;
+  padding: 32px 24px 32px;
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
-}
-
-.app-brand {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
-  padding: 6px 12px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  background: var(--surface);
-  border-bottom-right-radius: 12px;
-  border: 1px solid var(--border);
-  border-top: none;
-  border-left: none;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
 }
 
 .app-header {
@@ -57,14 +39,6 @@
   font-size: clamp(2rem, 6vw, 3.5rem);
   letter-spacing: -0.02em;
   margin: 0;
-}
-
-.game-title-ldpr {
-  color: #d4af37;
-  text-shadow: 0 0 24px rgba(212, 175, 55, 0.4);
-}
-
-.game-title-main {
   background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 40%, #22d3ee 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
